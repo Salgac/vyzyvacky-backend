@@ -6,17 +6,24 @@ class V1::PeopleController < ApplicationController
 
   #POST v1/people
   def create
-    params.permit(:firstName, :lastName, :team)
+    json_arr = params[:_json]
 
-    firstName = params[:firstName]
-    lastName = params[:lastName]
-    team = params[:team]
-    score = 1500
+    #Person.delete_all
+    #ActiveRecord::Base.connection.reset_pk_sequence!("people")
 
-    new_person = Person.new(:firstName => firstName, :lastName => lastName, :team_id => Team.where(name: params[:team]).ids.first, :score => score)
-    new_person.save
+    #add each item from json array into database
+    json_arr.each do |person|
+      firstName = person[:firstName]
+      lastName = person[:lastName]
+      team_id = Team.find_by(name: person[:team]).id
+      age = person[:age]
+      age >= 18 ? score = 2000 : score = 1500
 
-    render json: new_person, status: 201
+      new_person = Person.new(:firstName => firstName, :lastName => lastName, :team_id => team_id, :score => score)
+      new_person.save
+    end
+
+    render json: json_arr, status: 201
   end
 
   #DELETE v1/people/:id
