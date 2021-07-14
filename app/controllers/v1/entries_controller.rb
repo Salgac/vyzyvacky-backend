@@ -6,16 +6,19 @@ class V1::EntriesController < ApplicationController
 
   #POST v1/entries
   def create
-    params.permit(:time, :winner, :looser)
+    json_arr = params[:_json]
 
-    time = params[:time]
-    winner = params[:winner]
-    looser = params[:looser]
+    #add each item from json array into database
+    json_arr.each do |entry|
+      time = entry[:time]
+      winner = entry[:winner]
+      looser = entry[:looser]
 
-    new_entry = Entry.new(:time => time, :winner_id => winner, :looser_id => looser)
-    new_entry.save
+      entry = Entry.new(:time => time, :winner_id => winner, :looser_id => looser)
+      entry.save!
+    end
 
-    render json: new_entry, status: 201
+    render json: json_arr, status: 201
   end
 
   #DELETE v1/entries/:id
