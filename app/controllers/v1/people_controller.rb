@@ -1,7 +1,7 @@
 class V1::PeopleController < ApplicationController
   #GET v1/people
   def index
-    render json: Person.all
+    render json: Person.joins(:team).select(Person.column_names + Team.column_names - ["updated_at", "created_at", "team_id", "score"])
   end
 
   #POST v1/people
