@@ -17,7 +17,7 @@ class V1::PeopleController < ApplicationController
       lastName = person[:lastName]
       team_id = Team.find_by(name: person[:team]).id
       age = person[:age]
-      age >= 18 ? score = 2000 : score = 1500
+      score = calculate_score(age)
 
       new_person = Person.new(:firstName => firstName, :lastName => lastName, :team_id => team_id, :score => score, :age => age)
       new_person.save
