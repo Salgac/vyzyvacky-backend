@@ -1,7 +1,7 @@
 class V1::PeopleController < ApplicationController
   #GET v1/people
   def index
-    render json: Person.joins(:team).select(Person.column_names + Team.column_names - ["updated_at", "created_at", "team_id", "score"])
+    render json: Person.joins(:team).select(Person.column_names + Team.column_names - ["updated_at", "created_at", "team_id", "score"]).reorder("id ASC")
   end
 
   #POST v1/people
@@ -19,7 +19,7 @@ class V1::PeopleController < ApplicationController
       age = person[:age]
       age >= 18 ? score = 2000 : score = 1500
 
-      new_person = Person.new(:firstName => firstName, :lastName => lastName, :team_id => team_id, :score => score)
+      new_person = Person.new(:firstName => firstName, :lastName => lastName, :team_id => team_id, :score => score, :age => age)
       new_person.save
     end
 
