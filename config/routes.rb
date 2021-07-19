@@ -8,5 +8,6 @@ Rails.application.routes.draw do
     resources :entries
 
     get "/score", to: "scoreboard#index"
+    get "/team_score", to: "scoreboard#team"
   end
 end
