@@ -1,6 +1,6 @@
 class V1::ScoreboardController < ApplicationController
   def index
-    people_arr = Person.joins(:team).select(Person.column_names + Team.column_names - ["updated_at", "created_at"])
+    people_arr = Person.joins(:team).all
     entry_arr = Entry.all.reorder("time ASC")
 
     reset_score(people_arr)
@@ -31,7 +31,8 @@ class V1::ScoreboardController < ApplicationController
       looser.update(score: looser_new)
     end
 
-    render json: people_arr.reorder("score DESC").order("id ASC")
+    columns = Person.column_names + Team.column_names - ["updated_at", "created_at", "id", "team_id", "age", "color"]
+    render json: people_arr.reorder("score DESC").order("people.id ASC").select(columns)
   end
 
   def team
