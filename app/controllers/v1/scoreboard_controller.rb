@@ -36,7 +36,7 @@ class V1::ScoreboardController < ApplicationController
   end
 
   def team
-    team_arr = Team.select(Team.column_names - ["updated_at", "created_at"]).order("id ASC")
+    team_arr = Team.all
 
     team_arr.each do |team|
       people = Person.where(team_id: team.id)
@@ -51,7 +51,9 @@ class V1::ScoreboardController < ApplicationController
       team.update(score: (score / count))
     end
 
-    render json: team_arr.reorder("score DESC")
+    columns = Team.column_names - ["updated_at", "created_at", "id", "color"]
+
+    render json: team_arr.select(columns).reorder("score DESC").order("id ASC")
   end
 
   #helper
