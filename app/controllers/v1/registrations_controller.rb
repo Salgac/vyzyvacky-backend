@@ -4,7 +4,11 @@ class V1::RegistrationsController < ApplicationController
   def create
     new_game = Game.new(game_params)
     if new_game.save
-      render json: new_game
+
+      #login to game
+      command = AuthenticateGame.call(params[:code], params[:password])
+      command.success? ? token = command.result : return
+      render json: { game_code: params[:code], auth_token: token }
     else
       render json: { error: "Game code " + params[:code] + " is already used." }
     end

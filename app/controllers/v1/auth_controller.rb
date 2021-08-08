@@ -5,7 +5,7 @@ class V1::AuthController < ApplicationController
     command = AuthenticateGame.call(params[:code], params[:password])
 
     if command.success?
-      render json: { auth_token: command.result }
+      render json: { game_code: params[:code], auth_token: command.result }
     else
       render json: { error: command.errors }, status: :unauthorized
     end
