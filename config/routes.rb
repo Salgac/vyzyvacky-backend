@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
     #registration and authentication
     post "/sign_up", to: "registrations#create"
+    post "/sign_in", to: "auth#authenticate"
 
     #basic CRUD endpoints
     resources :teams

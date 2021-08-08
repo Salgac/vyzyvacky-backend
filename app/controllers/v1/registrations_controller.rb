@@ -1,4 +1,6 @@
 class V1::RegistrationsController < ApplicationController
+  skip_before_action :authenticate_request
+
   def create
     new_game = Game.new(game_params)
     if new_game.save
