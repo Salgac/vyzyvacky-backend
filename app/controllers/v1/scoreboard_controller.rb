@@ -45,7 +45,14 @@ class V1::ScoreboardController < ApplicationController
       count = 0
 
       people.each do |person|
-        score += person.score
+        pScore = person.score
+
+        #ignore people with 2000 score by default
+        if (calculate_score(person.age) == 2000)
+          pScore -= 500
+        end
+
+        score += pScore
         count += 1
       end
       team.update(score: (score / count))
