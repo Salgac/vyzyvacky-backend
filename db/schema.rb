@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_08_090013) do
+ActiveRecord::Schema.define(version: 2021_08_24_123511) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 2021_08_08_090013) do
     t.bigint "looser_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "game_id", null: false
+    t.index ["game_id"], name: "index_entries_on_game_id"
     t.index ["looser_id"], name: "index_entries_on_looser_id"
     t.index ["winner_id"], name: "index_entries_on_winner_id"
   end
@@ -40,6 +42,8 @@ ActiveRecord::Schema.define(version: 2021_08_08_090013) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "age"
+    t.bigint "game_id", null: false
+    t.index ["game_id"], name: "index_people_on_game_id"
     t.index ["team_id"], name: "index_people_on_team_id"
   end
 
@@ -49,9 +53,14 @@ ActiveRecord::Schema.define(version: 2021_08_08_090013) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "score"
+    t.bigint "game_id", null: false
+    t.index ["game_id"], name: "index_teams_on_game_id"
   end
 
+  add_foreign_key "entries", "games"
   add_foreign_key "entries", "people", column: "looser_id"
   add_foreign_key "entries", "people", column: "winner_id"
+  add_foreign_key "people", "games"
   add_foreign_key "people", "teams"
+  add_foreign_key "teams", "games"
 end
