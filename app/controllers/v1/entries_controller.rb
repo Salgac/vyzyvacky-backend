@@ -1,7 +1,10 @@
 class V1::EntriesController < ApplicationController
   #GET v1/entries
   def index
-    render json: Entry.all
+    #Entry.delete_all
+    #ActiveRecord::Base.connection.reset_pk_sequence!("entries")
+
+    render json: Entry.where(game_id: @current_game.id)
   end
 
   #POST v1/entries
@@ -13,8 +16,9 @@ class V1::EntriesController < ApplicationController
       time = entry[:time]
       winner = entry[:winner]
       looser = entry[:looser]
+      game_id = @current_game.id
 
-      entry = Entry.new(:time => time, :winner_id => winner, :looser_id => looser)
+      entry = Entry.new(:time => time, :winner_id => winner, :looser_id => looser, :game_id => game_id)
       entry.save!
     end
 
@@ -25,7 +29,7 @@ class V1::EntriesController < ApplicationController
   def destroy
     params.permit(:id)
 
-    entry = Entry.find_by_id(params[:id])
+    entry = Entry.where(game_id: @current_game.id).find_by_id(params[:id])
     entry.destroy
 
     render status: 204

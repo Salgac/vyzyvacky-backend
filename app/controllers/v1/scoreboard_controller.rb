@@ -1,7 +1,7 @@
 class V1::ScoreboardController < ApplicationController
   def index
-    people_arr = Person.joins(:team).all
-    entry_arr = Entry.all.reorder("time ASC")
+    people_arr = Person.joins(:team).where(game_id: @current_game.id)
+    entry_arr = Entry.where(game_id: @current_game.id).reorder("time ASC")
 
     reset_score(people_arr)
 
@@ -31,12 +31,12 @@ class V1::ScoreboardController < ApplicationController
       looser.update(score: looser_new)
     end
 
-    columns = Person.column_names + Team.column_names - ["updated_at", "created_at", "id", "team_id", "age", "color"]
+    columns = Person.column_names + Team.column_names - ["updated_at", "created_at", "id", "team_id", "age", "color", "game_id"]
     render json: people_arr.reorder("score DESC").order("people.id ASC").select(columns)
   end
 
   def team
-    team_arr = Team.all
+    team_arr = Team.where(game_id: @current_game.id)
 
     team_arr.each do |team|
       people = Person.where(team_id: team.id)
@@ -58,7 +58,7 @@ class V1::ScoreboardController < ApplicationController
       team.update(score: (score / count))
     end
 
-    columns = Team.column_names - ["updated_at", "created_at", "id", "color"]
+    columns = Team.column_names - ["updated_at", "created_at", "id", "color", "game_id"]
 
     render json: team_arr.select(columns).reorder("score DESC").order("id ASC")
   end
