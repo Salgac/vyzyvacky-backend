@@ -3,8 +3,20 @@ class V1::EntriesController < ApplicationController
   def index
     #Entry.delete_all
     #ActiveRecord::Base.connection.reset_pk_sequence!("entries")
+    entry_arr = Entry.where(game_id: @current_game.id).reorder("time ASC")
+    json_arr = []
 
-    render json: Entry.where(game_id: @current_game.id)
+    for entry in entry_arr
+      winner = Person.find_by_id(entry.winner_id)
+      looser = Person.find_by_id(entry.looser_id)
+      json_arr.push({
+        :time => entry.time,
+        :winner => winner.lastName + " " + winner.firstName,
+        :looser => looser.lastName + " " + looser.firstName,
+      })
+    end
+
+    render json: json_arr
   end
 
   #POST v1/entries
