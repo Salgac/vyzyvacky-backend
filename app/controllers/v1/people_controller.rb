@@ -1,7 +1,20 @@
 class V1::PeopleController < ApplicationController
   #GET v1/people
   def index
-    render json: Person.joins(:team).where(game_id: @current_game.id).select(Person.column_names + Team.column_names - ["updated_at", "created_at", "team_id", "score"]).reorder("id ASC")
+    people_arr = Person.joins(:team).where(game_id: @current_game.id).select(Person.column_names + Team.column_names).order("\"lastName\" ASC")
+    json_arr = []
+
+    for person in people_arr
+      json_arr.push({
+        :firstName => person.firstName,
+        :lastName => person.lastName,
+        :age => person.age,
+        :teamName => person.name,
+        :teamColor => person.color,
+      })
+    end
+
+    render json: json_arr
   end
 
   #POST v1/people
