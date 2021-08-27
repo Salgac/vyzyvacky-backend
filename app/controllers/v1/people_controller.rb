@@ -6,6 +6,7 @@ class V1::PeopleController < ApplicationController
 
     for person in people_arr
       json_arr.push({
+        :id => person.id,
         :firstName => person.firstName,
         :lastName => person.lastName,
         :age => person.age,
