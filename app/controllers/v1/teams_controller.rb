@@ -1,7 +1,17 @@
 class V1::TeamsController < ApplicationController
   #GET v1/teams
   def index
-    render json: Team.where(game_id: @current_game.id)
+    teams_arr = Team.where(game_id: @current_game.id).order("name ASC")
+    json_arr = []
+
+    for team in teams_arr
+      json_arr.push({
+        :id => team.id,
+        :teamName => team.name,
+        :teamColor => team.color,
+      })
+    end
+    render json_arr
   end
 
   #POST v1/teams
