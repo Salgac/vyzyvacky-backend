@@ -60,7 +60,7 @@ class V1::ScoreboardController < ApplicationController
       count == 0 ? score = 0 : score = score / count
 
       #update
-      team.update(score: (score / count))
+      team.update(score: (score))
     end
 
     columns = Team.column_names - ["updated_at", "created_at", "id", "color", "game_id"]
