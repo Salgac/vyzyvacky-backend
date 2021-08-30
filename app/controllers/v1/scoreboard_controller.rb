@@ -37,6 +37,7 @@ class V1::ScoreboardController < ApplicationController
 
   def team
     team_arr = Team.where(game_id: @current_game.id)
+    json_arr = []
 
     team_arr.each do |team|
       people = Person.where(game_id: @current_game.id, team_id: team.id)
@@ -59,13 +60,18 @@ class V1::ScoreboardController < ApplicationController
       #average the score
       count == 0 ? score = 0 : score = score / count
 
-      #update
+      #update and push
       team.update(score: (score))
+
+      json_arr.push({
+        :id => team.id,
+        :teamName => team.name,
+        :teamColor => team.color,
+        :score => team.score,
+      })
     end
 
-    columns = Team.column_names - ["updated_at", "created_at", "id", "color", "game_id"]
-
-    render json: team_arr.select(columns).reorder("score DESC").order("id ASC")
+    render json: json_arr
   end
 
   #helper
