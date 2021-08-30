@@ -1,10 +1,8 @@
 class V1::ScoreboardController < ApplicationController
   def index
-    people_arr = Person.joins(:team).where(game_id: @current_game.id)
+    reset_score(Person.where(game_id: @current_game.id))
+
     entry_arr = Entry.where(game_id: @current_game.id).reorder("time ASC")
-
-    reset_score(people_arr)
-
     entry_arr.each do |entry|
       #select participants
       winner = Person.find_by_id(entry.winner_id)
@@ -31,8 +29,22 @@ class V1::ScoreboardController < ApplicationController
       looser.update(score: looser_new)
     end
 
-    columns = Person.column_names + Team.column_names - ["updated_at", "created_at", "id", "team_id", "age", "color", "game_id"]
-    render json: people_arr.reorder("score DESC").order("people.id ASC").select(columns)
+    #add all person data into response array
+    people_arr = Person.joins(:team).where(game_id: @current_game.id).reorder("score DESC").order("people.\"lastName\" ASC").all
+    json_arr = []
+
+    people_arr.each do |person|
+      json_arr.push({
+        :id => person.id,
+        :firstName => person.firstName,
+        :lastName => person.lastName,
+        :score => person.score,
+        :teamName => person.team.name,
+        :teamColor => person.team.color,
+      })
+    end
+
+    render json: json_arr
   end
 
   def team
@@ -58,7 +70,7 @@ class V1::ScoreboardController < ApplicationController
       end
 
       #average the score
-      count == 0 ? score = 0 : score = score / count
+      count != 0 ? score = score / count : nil
 
       #update and push
       team.update(score: (score))
@@ -71,7 +83,7 @@ class V1::ScoreboardController < ApplicationController
       })
     end
 
-    render json: json_arr
+    render json: json_arr.sort_by { |obj| obj[:score] }.reverse
   end
 
   #helper
