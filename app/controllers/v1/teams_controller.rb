@@ -11,7 +11,7 @@ class V1::TeamsController < ApplicationController
         :teamColor => team.color,
       })
     end
-    render json_arr
+    render json: json_arr
   end
 
   #POST v1/teams
