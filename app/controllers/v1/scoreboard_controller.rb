@@ -39,7 +39,7 @@ class V1::ScoreboardController < ApplicationController
     team_arr = Team.where(game_id: @current_game.id)
 
     team_arr.each do |team|
-      people = Person.where(team_id: team.id)
+      people = Person.where(game_id: @current_game.id, team_id: team.id)
 
       score = 0
       count = 0
@@ -55,6 +55,11 @@ class V1::ScoreboardController < ApplicationController
         score += pScore
         count += 1
       end
+
+      #average the score
+      count == 0 ? score = 0 : score = score / count
+
+      #update
       team.update(score: (score / count))
     end
 
